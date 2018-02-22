@@ -61,19 +61,11 @@ class S2_Member_Cleaner_Admin {
 	 */
 	public function enqueue_styles() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in S2_Member_Cleaner_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The S2_Member_Cleaner_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		$screen = get_current_screen();
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/s2-member-cleaner-admin.css', array(), $this->version, 'all' );
+		if( 'settings_page_s2_member_cleaner' == $screen->id){
+			wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/s2-member-cleaner-admin.css', array(), $this->version, 'all' );
+		}
 
 	}
 
@@ -84,19 +76,11 @@ class S2_Member_Cleaner_Admin {
 	 */
 	public function enqueue_scripts() {
 
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in S2_Member_Cleaner_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The S2_Member_Cleaner_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
+		$screen = get_current_screen();
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/s2-member-cleaner-admin.js', array( 'jquery' ), $this->version, false );
+		if( 'settings_page_s2_member_cleaner' == $screen->id){
+			wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/s2-member-cleaner-admin.js', array( 'jquery' ), $this->version, false );
+		}
 
 	}
 
@@ -109,6 +93,55 @@ class S2_Member_Cleaner_Admin {
 
 	public function s2_member_cleaner_page(){
 		require_once 'partials/s2-member-cleaner-admin-display.php';
+	}
+
+	/**
+	 * Deletes a batch (max 1000) of users
+	 * @return int number of users deleted
+	 */
+	public function delete_batch_of_expired_users(){
+		$args = array(
+		  'role' => 'subscriber',
+		  'number' => 1000,
+		  'date_query'    => array(
+		     array(
+		         'before'     => '-6 months',
+		         'inclusive' => true,
+		     ),
+		  ),
+		);
+		$user_query = new WP_User_Query($args);
+
+		$count = 0;
+
+		if ( ! empty( $user_query->get_results() ) ) {
+			foreach ( $user_query->get_results() as $user ) {
+				if( s2member_last_login_time($user->ID) <= strtotime('-6 months') ){
+					// if( wp_delete_user( $user->ID ) ){
+					// 	$count++;
+					// }
+					$count++;
+				}
+			}
+		}
+
+		return $count;
+
+	}
+
+	public function s2mc_ajax_delete_batch(){
+
+		check_ajax_referer( 's2mc-delete-batch-ajax-nonce', 'security' );
+		if(!current_user_can( 'manage_options' ) ) {
+			echo 'Admin Access Only';
+			wp_die();
+		}
+
+		$result = $this->delete_batch_of_expired_users();
+
+		echo $result;
+
+		wp_die();
 	}
 
 }

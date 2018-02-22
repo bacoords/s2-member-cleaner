@@ -67,8 +67,8 @@ class S2_Member_Cleaner {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-			$this->version = PLUGIN_NAME_VERSION;
+		if ( defined( 'S2_MEMBER_CLEANER_VERSION' ) ) {
+			$this->version = S2_MEMBER_CLEANER_VERSION;
 		} else {
 			$this->version = '1.0.0';
 		}
@@ -157,7 +157,7 @@ class S2_Member_Cleaner {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_submenu_pages' );
-
+		$this->loader->add_action( 'wp_ajax_s2mc_ajax_delete_batch', $plugin_admin, 's2mc_ajax_delete_batch' );
 	}
 
 	/**
