@@ -13,8 +13,8 @@
  * @package           S2_Member_Cleaner
  *
  * @wordpress-plugin
- * Plugin Name:       S2 Member User Cleaner
- * Plugin URI:        https://briancoords.com
+ * Plugin Name:       S2 Member Cleaner
+ * Plugin URI:        https://www.briancoords.com
  * Description:       Handle automatic cleaning of old S2 Member accounts.
  * Version:           1.0.0
  * Author:            Brian Coords
@@ -36,6 +36,17 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'S2_MEMBER_CLEANER_VERSION', '1.0.0' );
+
+/**
+ * Plugin Update Checker
+ * @var [type]
+ */
+require 'includes/plugin-update-checker/plugin-update-checker.php';
+$myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
+	'https://github.com/bacoords/s2-member-cleaner/',
+	__FILE__,
+	's2-member-cleaner'
+);
 
 /**
  * The code that runs during plugin activation.
