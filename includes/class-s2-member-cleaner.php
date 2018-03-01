@@ -158,6 +158,7 @@ class S2_Member_Cleaner {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_submenu_pages' );
 		$this->loader->add_action( 'wp_ajax_s2mc_ajax_delete_batch', $plugin_admin, 's2mc_ajax_delete_batch' );
+		$this->loader->add_action( 's2_member_cleaner_schedule', $plugin_admin, 'delete_batch_of_expired_users', 10, 0 );
 	}
 
 	/**

@@ -20,7 +20,7 @@
 				$.post(ajaxurl, args, function(response) {
 
 						$('#s2mc-loading').removeClass('show');
-						alert(response + ' users WOULD HAVE BEEN deleted.');
+						alert(response + ' users were deleted.');
 						location.reload();
 				});
 			}

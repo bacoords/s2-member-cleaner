@@ -3,9 +3,11 @@
  * included in this file.
  */
 .s2mc-users-list{
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: scroll;
   padding: 5px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
 }
 
 .inside.s2mc-footer{

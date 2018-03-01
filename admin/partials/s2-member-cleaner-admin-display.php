@@ -11,9 +11,12 @@
  * @package    S2_Member_Cleaner
  * @subpackage S2_Member_Cleaner/admin/partials
  */
+
+$max_users = $this->max_users;
+
 $args = array(
   'role' => 'subscriber',
-  'number' => 1000,
+  'number' => $max_users,
   'date_query'    => array(
      array(
          'before'     => '-6 months',
@@ -23,10 +26,22 @@ $args = array(
 );
 $user_query = new WP_User_Query($args);
 
+
+// Get/Set cron task jobs
+$s2mc_schedule_cron_orig = get_option('s2mc_schedule_cron');
+
 if( isset( $_POST['s2mc_schedule_cron'] ) ){
   update_option('s2mc_schedule_cron', $_POST['s2mc_schedule_cron'] );
 }
 $s2mc_schedule_cron = get_option('s2mc_schedule_cron');
+
+if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
+  // Remove current cron job
+  wp_clear_scheduled_hook( 's2_member_cleaner_schedule' );
+  if( $s2mc_schedule_cron != 'off' ) {
+    wp_schedule_event( time(), $s2mc_schedule_cron, 's2_member_cleaner_schedule', array() );
+  }
+}
 
 ?>
 
@@ -55,9 +70,9 @@ $s2mc_schedule_cron = get_option('s2mc_schedule_cron');
           </span>
         </h2>
         <div class="inside">
-          <label for="s2mc_schedule_cron">**NOT FUNCTIONAL** Check for expired users and delete:</label>
+          <label for="s2mc_schedule_cron">Check for expired users and delete:</label>
           <select name="s2mc_schedule_cron" id="s2mc_schedule_cron">
-            <option value="">Manual Only</option>
+            <option value="off" <?php if($s2mc_schedule_cron == 'off') echo 'selected'; ?>>Manual Only</option>
             <option value="hourly" <?php if($s2mc_schedule_cron == 'hourly') echo 'selected'; ?>>Hourly</option>
             <option value="daily" <?php if($s2mc_schedule_cron == 'daily') echo 'selected'; ?>>Daily</option>
             <option value="twicedaily" <?php if($s2mc_schedule_cron == 'twicedaily') echo 'selected'; ?>>Twice Daily</option>
@@ -76,13 +91,20 @@ $s2mc_schedule_cron = get_option('s2mc_schedule_cron');
           </span>
         </h2>
         <div class="inside">
-          <p>Here's a list of free users who haven't logged in in 6+ months (max 1000).</p>
+          <p>Here's a list of free users who haven't logged in in 6+ months (max <?php echo $max_users; ?>).</p>
           <div class="s2mc-users-list">
             <ol>
               <?php if ( ! empty( $user_query->get_results() ) ) {
               	foreach ( $user_query->get_results() as $user ) {
                   if( s2member_last_login_time($user->ID) <= strtotime('-6 months') ){
-                    echo "<li><a href='". get_edit_user_link( $user->ID ) . "'>$user->display_name</a>, Role: ". get_user_field ("s2member_access_role", $user->ID) .", level ". get_user_field ("s2member_access_level", $user->ID) .", created their account on " . date("F j, Y", s2member_registration_time($user->ID) ) . " and last logged in on " . date("F j, Y", s2member_last_login_time($user->ID) ) ."</li>";
+                    $echo =  "<li><a href='". get_edit_user_link( $user->ID ) . "'>$user->display_name</a>, Role: ". get_user_field ("s2member_access_role", $user->ID) .", level ". get_user_field ("s2member_access_level", $user->ID) .", created their account on " . date("F j, Y", s2member_registration_time($user->ID) );
+                    $last_login = date("F j, Y", s2member_last_login_time($user->ID) );
+                    if( $last_login == 0 ){
+                      $echo .= " and never logged in.</li>";
+                    } else {
+                      $echo .= " and last logged in on $last_login.</li>";
+                    }
+                    echo $echo;
                   }
               	}
               } else {

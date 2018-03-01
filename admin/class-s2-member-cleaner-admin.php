@@ -40,6 +40,8 @@ class S2_Member_Cleaner_Admin {
 	 */
 	private $version;
 
+	public $max_users = 50;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -100,9 +102,12 @@ class S2_Member_Cleaner_Admin {
 	 * @return int number of users deleted
 	 */
 	public function delete_batch_of_expired_users(){
+
+		$max_users = $this->max_users;
+		
 		$args = array(
 		  'role' => 'subscriber',
-		  'number' => 1000,
+		  'number' => $max_users,
 		  'date_query'    => array(
 		     array(
 		         'before'     => '-6 months',
@@ -117,10 +122,9 @@ class S2_Member_Cleaner_Admin {
 		if ( ! empty( $user_query->get_results() ) ) {
 			foreach ( $user_query->get_results() as $user ) {
 				if( s2member_last_login_time($user->ID) <= strtotime('-6 months') ){
-					// if( wp_delete_user( $user->ID ) ){
-					// 	$count++;
-					// }
-					$count++;
+					if( wp_delete_user( $user->ID ) ){
+						$count++;
+					}
 				}
 			}
 		}
