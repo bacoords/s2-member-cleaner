@@ -30,7 +30,7 @@ class S2_Member_Cleaner_Deactivator {
 	 * @since    1.0.0
 	 */
 	public static function deactivate() {
-
+		wp_clear_scheduled_hook( 's2_member_cleaner_schedule' );
 	}
 
 }
