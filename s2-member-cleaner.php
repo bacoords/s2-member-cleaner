@@ -16,7 +16,7 @@
  * Plugin Name:       S2 Member Cleaner
  * Plugin URI:        https://www.briancoords.com
  * Description:       Handle automatic cleaning of old S2 Member accounts.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Author:            Brian Coords
  * Author URI:        https://briancoords.com
  * License:           GPL-2.0+
@@ -35,7 +35,37 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'S2_MEMBER_CLEANER_VERSION', '1.0.1' );
+define( 'S2_MEMBER_CLEANER_VERSION', '1.0.2' );
+
+
+
+/**
+ * Load plugin class, but only if S2Member.
+ *
+ * @return 	void
+ * @since 	1.0.2
+ */
+function s2_member_activation_check() {
+
+	$has_dependencies = true;
+
+	if ( !function_exists( 's2member_last_login_time' ) ) {
+
+		$has_dependencies = false;
+
+	}
+	if ( !$has_dependencies ) {
+
+		 add_action( 'admin_notices', function(){
+			  echo '<div class="notice notice-error"><p><strong>S2 Member</strong> is missing or an outdated version. S2 Member Cleaner has been <strong>deactivated</strong>.</p></div>';
+		 });
+
+	 	 deactivate_plugins( plugin_basename( __FILE__ ) );
+	}
+}
+
+add_action( 'admin_init', 's2_member_activation_check', 1 );
+
 
 /**
  * Plugin Update Checker

@@ -45,8 +45,6 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
 
 ?>
 
-<!-- This file should primarily consist of HTML with a little bit of PHP. -->
-
 <div id="s2mc-loading">
   <div class="s2mc-spinner">
     <div class="rect1"></div>
@@ -69,6 +67,7 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
             Settings
           </span>
         </h2>
+
         <div class="inside">
           <label for="s2mc_schedule_cron">Check for expired users and delete:</label>
           <select name="s2mc_schedule_cron" id="s2mc_schedule_cron">
@@ -78,9 +77,11 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
             <option value="twicedaily" <?php if($s2mc_schedule_cron == 'twicedaily') echo 'selected'; ?>>Twice Daily</option>
           </select>
         </div>
+
         <div class="inside s2mc-footer">
           <input type="submit" class="button button-primary" value="Save Changes">
         </div>
+
       </div>
 
 
@@ -90,6 +91,7 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
             Manual Delete
           </span>
         </h2>
+
         <div class="inside">
           <p>Here's a list of free users who haven't logged in in 6+ months (max <?php echo $max_users; ?>).</p>
           <div class="s2mc-users-list">
@@ -113,10 +115,12 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
             </ol>
           </div>
         </div>
+
         <div class="inside s2mc-footer">
           <input type="hidden" name="s2mc-delete-batch-ajax-nonce" id="s2mc-delete-batch-ajax-nonce" value="<?php echo wp_create_nonce( 's2mc-delete-batch-ajax-nonce' ); ?>" />
           <a href="#" id="s2mc-delete-batch-btn" class="button button-secondary">Delete a batch now.</a>
         </div>
+
       </div>
 
 

@@ -2,7 +2,7 @@
 Contributors: bacoords
 Donate link: https://www.briancoords.com
 Tags: s2-member
-Requires at least: 3.0.1
+Requires at least: 4.9
 Tested up to: 4.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -41,10 +41,9 @@ Nope. It only runs deletes in groups of 50 users to cut down on database overloa
 
 == Changelog ==
 
+= 1.0.2 =
+* Removes scheduled jobs on deactivation
+* Requires S2Member being activated
+
 = 1.0 =
 * Initial Release
-
-== Upgrade Notice ==
-
-= 1.0 =
-Initial release
