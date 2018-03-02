@@ -10,9 +10,6 @@
 			if( window.confirm("Are you sure you want to delete?") ){
 				$('#s2mc-loading').addClass('show');
 				var nonce = $( '#s2mc-delete-batch-ajax-nonce' ).val();
-
-				console.log(nonce);
-
 				var args = {
 					'action' : 's2mc_ajax_delete_batch',
 					'security' : nonce

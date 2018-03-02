@@ -13,13 +13,15 @@
  */
 
 $max_users = $this->max_users;
+$timeline = $this->timeline;
 
 $args = array(
   'role' => 'subscriber',
   'number' => $max_users,
+  'fields' => 'ID',
   'date_query'    => array(
      array(
-         'before'     => '-6 months',
+         'before'     => $timeline,
          'inclusive' => true,
      ),
   ),
@@ -40,6 +42,9 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
   wp_clear_scheduled_hook( 's2_member_cleaner_schedule' );
   if( $s2mc_schedule_cron != 'off' ) {
     wp_schedule_event( time(), $s2mc_schedule_cron, 's2_member_cleaner_schedule', array() );
+    echo "<div class='notice notice-success is-dismissible'><p><strong>Updated!</strong> S2 Member Cleaner is <strong>currently scheduled $s2mc_schedule_cron</strong>.</p></div>";
+  } else {
+    echo "<div class='notice notice-success is-dismissible'><p><strong>Updated!</strong> S2 Member Cleaner is <strong>not currently scheduled</strong>.</p></div>";
   }
 }
 
@@ -93,14 +98,14 @@ if($s2mc_schedule_cron_orig !== $s2mc_schedule_cron ){
         </h2>
 
         <div class="inside">
-          <p>Here's a list of free users who haven't logged in in 6+ months (max <?php echo $max_users; ?>).</p>
+          <p>Here's a list of free users who haven't logged in since <?php echo date("F j Y", strtotime($timeline)); ?> (max <?php echo $max_users; ?>).</p>
           <div class="s2mc-users-list">
             <ol>
               <?php if ( ! empty( $user_query->get_results() ) ) {
               	foreach ( $user_query->get_results() as $user ) {
-                  if( s2member_last_login_time($user->ID) <= strtotime('-6 months') ){
-                    $echo =  "<li><a href='". get_edit_user_link( $user->ID ) . "'>$user->display_name</a>, Role: ". get_user_field ("s2member_access_role", $user->ID) .", level ". get_user_field ("s2member_access_level", $user->ID) .", created their account on " . date("F j, Y", s2member_registration_time($user->ID) );
-                    $last_login = date("F j, Y", s2member_last_login_time($user->ID) );
+                  if( s2member_last_login_time($user) <= strtotime($timeline) ){
+                    $echo =  "<li><a href='". get_edit_user_link( $user ) . "'>User ID: $user</a>, Role: ". get_user_field ("s2member_access_role", $user) .", level ". get_user_field ("s2member_access_level", $user) .", created their account on " . date("F j, Y", s2member_registration_time($user) );
+                    $last_login = date("F j, Y", s2member_last_login_time($user) );
                     if( $last_login == 0 ){
                       $echo .= " and never logged in.</li>";
                     } else {

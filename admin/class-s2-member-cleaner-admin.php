@@ -42,6 +42,8 @@ class S2_Member_Cleaner_Admin {
 
 	public $max_users = 50;
 
+	public $timeline = '-6 months';
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -104,13 +106,15 @@ class S2_Member_Cleaner_Admin {
 	public function delete_batch_of_expired_users(){
 
 		$max_users = $this->max_users;
-		
+		$timeline = $this->timeline;
+
 		$args = array(
 		  'role' => 'subscriber',
 		  'number' => $max_users,
+			'fields' => 'ID',
 		  'date_query'    => array(
 		     array(
-		         'before'     => '-6 months',
+		         'before'     => $timeline,
 		         'inclusive' => true,
 		     ),
 		  ),
@@ -121,8 +125,8 @@ class S2_Member_Cleaner_Admin {
 
 		if ( ! empty( $user_query->get_results() ) ) {
 			foreach ( $user_query->get_results() as $user ) {
-				if( s2member_last_login_time($user->ID) <= strtotime('-6 months') ){
-					if( wp_delete_user( $user->ID ) ){
+				if( s2member_last_login_time( $user ) <= strtotime($timeline) ){
+					if( wp_delete_user( $user ) ){
 						$count++;
 					}
 				}
